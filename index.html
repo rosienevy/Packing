@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>Pack Check</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --surface: #181b22;
+    --surface-2: #20242d;
+    --border: #2a2f3a;
+    --text: #eef0f4;
+    --muted: #8b93a3;
+    --accent: #5eead4;
+    --accent-ink: #062b27;
+    --radius: 16px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-2: #eef0f4;
+      --border: #e1e4ea;
+      --text: #14171c;
+      --muted: #6b7384;
+      --accent: #0d9488;
+      --accent-ink: #ffffff;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: env(safe-area-inset-top) 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+
+  header { padding: 28px 0 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; font-weight: 700; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .reset {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 999px; padding: 8px 14px; font-size: 13px; cursor: pointer;
+  }
+  .reset:active { background: var(--surface-2); }
+
+  .tabs {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 4px; position: sticky; top: 8px; z-index: 5;
+  }
+  .tab {
+    border: 0; background: none; color: var(--muted);
+    padding: 11px 8px; border-radius: 999px; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+
+  .progress { margin: 20px 0 6px; }
+  .bar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .25s; }
+  .progress-label { color: var(--muted); font-size: 13px; margin-top: 8px; }
+
+  .status {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--border); display: grid; place-items: center;
+    transition: background .2s, border-color .2s;
+  }
+  .status svg { width: 13px; height: 13px; stroke: var(--accent-ink); opacity: 0; transition: opacity .2s; }
+  .done > .head .status { background: var(--accent); border-color: var(--accent); }
+  .done > .head .status svg { opacity: 1; }
+
+  .section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-top: 14px; overflow: hidden;
+  }
+  .section > .head { display: flex; align-items: center; gap: 12px; padding: 15px 16px; }
+  .section > .head h2 { margin: 0; flex: 1; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .done > .head .count { color: var(--accent); }
+
+  .group { border-top: 1px solid var(--border); background: var(--surface-2); }
+  .group > .head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .group > .head h3 { margin: 0; flex: 1; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .group.done > .head h3 { color: var(--text); }
+
+  .item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px 14px 20px; cursor: pointer; user-select: none;
+    border-top: 1px solid var(--border); background: var(--surface);
+  }
+  .item:active { background: var(--surface-2); }
+  .box {
+    flex: none; width: 26px; height: 26px; border-radius: 8px;
+    border: 2px solid var(--border); display: grid; place-items: center;
+    transition: background .15s, border-color .15s;
+  }
+  .box svg { width: 16px; height: 16px; stroke: var(--accent-ink); opacity: 0; transition: opacity .15s; }
+  .item.checked .box { background: var(--accent); border-color: var(--accent); }
+  .item.checked .box svg { opacity: 1; }
+  .name { flex: 1; font-size: 16px; }
+  .item.checked .name { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
+
+  .empty { padding: 14px 16px 14px 20px; color: var(--muted); font-size: 14px; font-style: italic; background: var(--surface); border-top: 1px solid var(--border); }
+  .message { margin-top: 24px; padding: 18px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--muted); font-size: 14px; }
+  .message b { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Pack Check</h1>
+      <div class="sub">Tick items as they go in</div>
+    </div>
+    <button class="reset" id="reset" type="button">Reset</button>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <div class="progress">
+    <div class="bar"><i id="bar"></i></div>
+    <div class="progress-label" id="progress-label"></div>
+  </div>
+
+  <main id="content"><div class="message">Loading your packing list…</div></main>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   The packing list comes from packingdata.csv (same folder as this file).
+   Columns:  Tab, Section, Group, Item
+   - Rows are shown in the order they appear in the CSV.
+   - Group blank  => item sits directly in the section.
+   - Item blank   => just declares the tab / section / group (so empty ones show).
+   - Groups and sections auto-tick when everything inside is ticked.
+------------------------------------------------------------------- */
+const CSV_FILE = "packingdata.csv";
+
+/* ---- CSV parsing (handles quotes, commas in cells, Excel BOM, CRLF) ---- */
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, "");
+  const rows = [];
+  let row = [], cell = "", inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cell += c;
+    } else if (c === '"') inQ = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell); cell = "";
+      rows.push(row); row = [];
+    } else cell += c;
+  }
+  if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+/* ---- turn CSV rows into tabs > sections > groups > items ---- */
+function buildData(rows) {
+  const header = rows[0].map(h => h.trim().toLowerCase());
+  const col = n => header.indexOf(n);
+  const iT = col("tab"), iS = col("section"), iG = col("group"), iI = col("item");
+  if (iT < 0 || iS < 0 || iG < 0 || iI < 0)
+    throw new Error("The first row must be: Tab, Section, Group, Item");
+
+  const tabs = [];
+  const find = (arr, title) => arr.find(x => x.title === title);
+
+  rows.slice(1).forEach(r => {
+    const tab = (r[iT] || "").trim();
+    const sec = (r[iS] || "").trim();
+    const grp = (r[iG] || "").trim();
+    const item = (r[iI] || "").trim();
+    if (!tab) return;
+
+    let t = find(tabs, tab);
+    if (!t) { t = { title: tab, sections: [] }; tabs.push(t); }
+    if (!sec) return;
+
+    let s = find(t.sections, sec);
+    if (!s) { s = { title: sec, groups: [], items: [] }; t.sections.push(s); }
+
+    let target = s.items;
+    if (grp) {
+      let g = find(s.groups, grp);
+      if (!g) { g = { title: grp, items: [] }; s.groups.push(g); }
+      target = g.items;
+    }
+    if (item) {
+      // duplicate names in the same place get their own id so ticks don't clash
+      const n = target.filter(x => x.label === item).length;
+      target.push({ label: item, id: n ? item + "#" + (n + 1) : item });
+    }
+  });
+  return tabs;
+}
+
+/* ---- app ---- */
+const STORE_KEY = "packcheck.v3";
+let DATA = [];
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) {}
+let activeTab = null;
+
+const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} };
+const key = (...p) => p.join("|");
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+function itemRow(k, label) {
+  const row = document.createElement("div");
+  row.className = "item" + (state[k] ? " checked" : "");
+  row.setAttribute("role", "checkbox");
+  row.setAttribute("aria-checked", !!state[k]);
+  row.tabIndex = 0;
+  row.innerHTML = `<span class="box">${CHECK}</span><span class="name"></span>`;
+  row.querySelector(".name").textContent = label;
+  const toggle = () => { state[k] ? delete state[k] : (state[k] = true); save(); render(); };
+  row.onclick = toggle;
+  row.onkeydown = e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggle(); } };
+  return row;
+}
+
+function head(tag, title, done, total) {
+  const h = document.createElement("div");
+  h.className = "head";
+  h.innerHTML = `<span class="status">${CHECK}</span><${tag}></${tag}><span class="count">${total ? done + " / " + total : ""}</span>`;
+  h.querySelector(tag).textContent = title;
+  return h;
+}
+
+function showMessage(html) {
+  document.getElementById("content").innerHTML = `<div class="message">${html}</div>`;
+  document.getElementById("tabs").innerHTML = "";
+  document.getElementById("bar").style.width = "0";
+  document.getElementById("progress-label").textContent = "";
+}
+
+function render() {
+  if (!DATA.length) return;
+
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  DATA.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "tab";
+    b.setAttribute("role", "tab");
+    b.textContent = t.title;
+    b.setAttribute("aria-selected", t.title === activeTab);
+    b.onclick = () => { activeTab = t.title; state.__tab = t.title; save(); render(); };
+    tabsEl.appendChild(b);
+  });
+
+  const tab = DATA.find(t => t.title === activeTab);
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+  let grandTotal = 0, grandDone = 0;
+
+  tab.sections.forEach(sec => {
+    const secEl = document.createElement("section");
+    const body = document.createElement("div");
+    let secTotal = 0, secDone = 0, allDone = true;
+
+    sec.items.forEach(it => {
+      const k = key(tab.title, sec.title, "", it.id);
+      secTotal++;
+      if (state[k]) secDone++; else allDone = false;
+      body.appendChild(itemRow(k, it.label));
+    });
+
+    sec.groups.forEach(g => {
+      const gEl = document.createElement("div");
+      const rows = document.createElement("div");
+      let gDone = 0;
+      g.items.forEach(it => {
+        const k = key(tab.title, sec.title, g.title, it.id);
+        if (state[k]) gDone++;
+        rows.appendChild(itemRow(k, it.label));
+      });
+      if (!g.items.length) rows.innerHTML = `<div class="empty">No items yet</div>`;
+      const gComplete = g.items.length > 0 && gDone === g.items.length;
+      gEl.className = "group" + (gComplete ? " done" : "");
+      gEl.appendChild(head("h3", g.title, gDone, g.items.length));
+      gEl.appendChild(rows);
+      body.appendChild(gEl);
+      secTotal += g.items.length; secDone += gDone;
+      if (!gComplete) allDone = false;
+    });
+
+    if (!sec.items.length && !sec.groups.length)
+      body.innerHTML = `<div class="empty" style="border-top:1px solid var(--border)">No items yet</div>`;
+
+    secEl.className = "section" + (secTotal > 0 && allDone ? " done" : "");
+    secEl.appendChild(head("h2", sec.title, secDone, secTotal));
+    secEl.appendChild(body);
+    content.appendChild(secEl);
+
+    grandTotal += secTotal; grandDone += secDone;
+  });
+
+  const pct = grandTotal ? Math.round(grandDone / grandTotal * 100) : 0;
+  document.getElementById("bar").style.width = pct + "%";
+  document.getElementById("progress-label").textContent =
+    grandTotal ? (grandDone === grandTotal ? "All packed ✓" : `${grandDone} of ${grandTotal} packed`) : "No items added yet";
+}
+
+document.getElementById("reset").onclick = () => {
+  if (!confirm("Untick everything?")) return;
+  const tab = state.__tab;
+  state = tab ? { __tab: tab } : {};
+  save(); render();
+};
+
+/* ---- load the CSV ---- */
+fetch(CSV_FILE + "?t=" + Date.now(), { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error(CSV_FILE + " not found (HTTP " + r.status + ")"); return r.text(); })
+  .then(text => {
+    DATA = buildData(parseCSV(text));
+    if (!DATA.length) throw new Error("No rows found in " + CSV_FILE);
+    activeTab = DATA.some(t => t.title === state.__tab) ? state.__tab : DATA[0].title;
+    render();
+  })
+  .catch(err => {
+    showMessage(`<b>Couldn't load the packing list.</b><br>${err.message}<br><br>
+      Make sure <b>${CSV_FILE}</b> sits next to index.html, and open the page from its web address
+      (GitHub Pages) rather than double-clicking the file.`);
+  });
+</script>
+</body>
+</html>

@@ -87,6 +87,11 @@
   .group > .head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
   .group > .head h3 { margin: 0; flex: 1; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
   .group.done > .head h3 { color: var(--text); }
+  .group > .head { cursor: pointer; user-select: none; }
+  .group > .head:active { background: var(--border); }
+  .chev { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+  .group.collapsed .chev { transform: rotate(-90deg); }
+  .group.collapsed > .rows { display: none; }
 
   .item {
     display: flex; align-items: center; gap: 14px;
@@ -214,6 +219,7 @@ let activeTab = null;
 const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} };
 const key = (...p) => p.join("|");
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const CHEV = '<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
 
 function itemRow(k, label) {
   const row = document.createElement("div");
@@ -232,7 +238,7 @@ function itemRow(k, label) {
 function head(tag, title, done, total) {
   const h = document.createElement("div");
   h.className = "head";
-  h.innerHTML = `<span class="status">${CHECK}</span><${tag}></${tag}><span class="count">${total ? done + " / " + total : ""}</span>`;
+  h.innerHTML = `<span class="status">${CHECK}</span><${tag}></${tag}><span class="count">${total ? done + " / " + total : ""}</span>${tag === "h3" ? CHEV : ""}`;
   h.querySelector(tag).textContent = title;
   return h;
 }
@@ -287,8 +293,17 @@ function render() {
       });
       if (!g.items.length) rows.innerHTML = `<div class="empty">No items yet</div>`;
       const gComplete = g.items.length > 0 && gDone === g.items.length;
-      gEl.className = "group" + (gComplete ? " done" : "");
-      gEl.appendChild(head("h3", g.title, gDone, g.items.length));
+      const ck = key("__c", tab.title, sec.title, g.title);
+      gEl.className = "group" + (gComplete ? " done" : "") + (state[ck] ? " collapsed" : "");
+      rows.className = "rows";
+      const gHead = head("h3", g.title, gDone, g.items.length);
+      gHead.setAttribute("role", "button");
+      gHead.setAttribute("aria-expanded", !state[ck]);
+      gHead.tabIndex = 0;
+      const toggleGroup = () => { state[ck] ? delete state[ck] : (state[ck] = true); save(); render(); };
+      gHead.onclick = toggleGroup;
+      gHead.onkeydown = e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleGroup(); } };
+      gEl.appendChild(gHead);
       gEl.appendChild(rows);
       body.appendChild(gEl);
       secTotal += g.items.length; secDone += gDone;

@@ -7,7 +7,9 @@ Main Rucksack,Main Compartment,Big wash,Spare lock
 Main Rucksack,Main Compartment,Big wash,Rehydration Powders
 Main Rucksack,Main Compartment,Big wash,Spare Face masks
 Main Rucksack,Main Compartment,Big wash,Nail Scissors and Tweezers
-Main Rucksack,Main Compartment,Big wash,Spray Tan
+Main Rucksack,Main Compartment,Big wash,Sun cream
+Main Rucksack,Main Compartment,Big wash,Face sun cream
+Main Rucksack,Main Compartment,Big wash,Soap
 ,,,
 Main Rucksack,Main Compartment,Blue packing cube,Shirt
 Main Rucksack,Main Compartment,Blue packing cube,Thermals
@@ -18,7 +20,7 @@ Main Rucksack,Main Compartment,Blue packing cube,Sports Vest
 Main Rucksack,Main Compartment,Silver packing cube,Dirty Laundry String bag
 Main Rucksack,Main Compartment,Silver packing cube,Underwear String Bag
 Main Rucksack,Main Compartment,Silver packing cube,Shorts
-Main Rucksack,Main Compartment,Silver packing cube,Skirt/ trousers
+Main Rucksack,Main Compartment,Silver packing cube,Skirt/ Trousers
 Main Rucksack,Main Compartment,Silver packing cube,Buff
 Main Rucksack,Main Compartment,Silver packing cube,PJs
 ,,,
@@ -29,7 +31,6 @@ Main Rucksack,Sleep Bag Compartment,Swim Pouch,Goggles
 ,,,
 Main Rucksack,Sleep Bag Compartment,Black shoe packing cube,Hiking Shoes
 Main Rucksack,Sleep Bag Compartment,Black shoe packing cube,Sandles
-
 ,,,
 Other,Cross Body Bag,Money Belt,Passport
 Other,Cross Body Bag,Money Belt,Wallet
@@ -40,6 +41,16 @@ Other,Cross Body Bag,Front Pocket,Earphones
 Other,Cross Body Bag,Main Pocket,Portable Charger
 Other,Cross Body Bag,Main Pocket,Kindle
 Other,Cross Body Bag,Main Pocket,Wired Earphones
+,,,
+Other,Army Backpack,Side pocket,Coffee cup
+Other,Army Backpack,Side pocket,Water Bottle
+,,,
+Other,Army Backpack,Top Lid,Drugs
+,,,
+Other,Army Backpack,Laptop compartment,Folder with printed docs
+,,,
+Other,Army Backpack,Main Compartment,Packed Lunch
+Other,Army Backpack,Main Compartment,Blue Small Backpack
 ,,,
 Other,Blue Small Backpack,Charging pouch,USB-C charger x2
 Other,Blue Small Backpack,Charging pouch,mirco USB charger
@@ -56,9 +67,3 @@ Other,Blue Small Backpack,Small Wash,Anti-travel drugs
 Other,Blue Small Backpack,Small Wash,Lip balm
 Other,Blue Small Backpack,Small Wash,Wax earplugs
 ,,,
-Other,Army Backpack,Side pocket,Coffee cup
-Other,Army Backpack,Side pocket,Water Bottle
-,,,
-Other,Army Backpack,Top Lid,Drugs
-,,,
-Other,Army Backpack,Main Compartment,Packed Lunch
